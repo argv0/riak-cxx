@@ -204,7 +204,7 @@ ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 DEPS_CXXFLAGS = "$(CFLAG_VISIBILITY) -fPIC"
 BUILD_DIR = $(abspath ../build/deps)
 PROTOBUF_SRC = protobuf-2.4.1
-BOOST_SRC = boost-1.47.0
+BOOST_SRC = boost-1.50.0
 all: all-am
 
 .SUFFIXES:
@@ -253,6 +253,7 @@ CTAGS:
 cscope cscopelist:
 
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-local
 check: check-am
 all-am: Makefile all-local
 installdirs:
@@ -352,27 +353,26 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: install-am install-strip
+.MAKE: check-am install-am install-strip
 
-.PHONY: all all-am all-local check check-am clean clean-generic \
-	clean-libtool clean-local distclean distclean-generic \
-	distclean-libtool distclean-local dvi dvi-am html html-am info \
-	info-am install install-am install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am uninstall uninstall-am
+.PHONY: all all-am all-local check check-am check-local clean \
+	clean-generic clean-libtool clean-local distclean \
+	distclean-generic distclean-libtool distclean-local dvi dvi-am \
+	html html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am uninstall uninstall-am
 
 
-#all-local: boost.ts protobufs.ts
-all-local: protobufs.ts 
+all-local: boost.ts protobufs.ts
 
-#boost.ts:
-#	cd $(BOOST_SRC) && make DEPS_CXXFLAGS=$(DEPS_CXXFLAGS)
-#	touch boost.ts
+boost.ts:
+	cd $(BOOST_SRC) && make DEPS_CXXFLAGS=$(DEPS_CXXFLAGS)
+	touch boost.ts
 
 protobufs.ts: $(PROTOBUF_SRC)/Makefile
 	cd $(PROTOBUF_SRC) && make && make install
@@ -386,13 +386,13 @@ $(PROTOBUF_SRC)/Makefile:
 	cd $(PROTOBUF_SRC) && CXXFLAGS=$(DEPS_CXXFLAGS) ./configure \
 	--prefix=$(BUILD_DIR) --disable-shared
 
-#check-local: boost-test.ts
+check-local: boost-test.ts
 
 clean-local:
 
 distclean-local:
 	cd $(PROTOBUF_SRC) && make distclean
-#	cd $(BOOST_SRC) && make clean
+	cd $(BOOST_SRC) && make clean
 	rm -f protobufs.ts
 	rm -f boost.ts
 	rm -f boost-test.ts
