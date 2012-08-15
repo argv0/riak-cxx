@@ -1,0 +1,6 @@
+notifications:
+  email: andy@andygross.org
+language: cpp
+compiler: 
+  - clang
+  - gcc
