@@ -104,7 +104,9 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libriak_client_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libriak_client_la_OBJECTS = src/libriak_client_la-pbc.lo
+am_libriak_client_la_OBJECTS = src/libriak_client_la-pbc.lo \
+	src/libriak_client_la-riak.pb.lo \
+	src/libriak_client_la-riak_kv.pb.lo
 libriak_client_la_OBJECTS = $(am_libriak_client_la_OBJECTS)
 libriak_client_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
@@ -275,7 +277,10 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 lib_LTLIBRARIES = libriak_client.la
-libriak_client_la_SOURCES = src/pbc.cpp
+libriak_client_la_SOURCES = src/pbc.cpp \
+			    src/riak.pb.cc \
+			    src/riak_kv.pb.cc
+
 libriak_client_la_CXXFLAGS = -g3 -Ibuild/deps/include $(CFLAG_VISIBILITY) 
 libriak_client_la_LDFLAGS = -Lbuild/deps/lib -lprotobuf-lite 
 riak_client_includedir = $(includedir)/riak_client/cxx
@@ -300,7 +305,7 @@ DIST_SUBDIRS = deps
 all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
+.SUFFIXES: .cc .cpp .lo .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -394,6 +399,10 @@ src/$(DEPDIR)/$(am__dirstamp):
 	@: > src/$(DEPDIR)/$(am__dirstamp)
 src/libriak_client_la-pbc.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/libriak_client_la-riak.pb.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libriak_client_la-riak_kv.pb.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 libriak_client.la: $(libriak_client_la_OBJECTS) $(libriak_client_la_DEPENDENCIES) $(EXTRA_libriak_client_la_DEPENDENCIES) 
 	$(libriak_client_la_LINK) -rpath $(libdir) $(libriak_client_la_OBJECTS) $(libriak_client_la_LIBADD) $(LIBS)
 
@@ -406,6 +415,53 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-pbc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-riak.pb.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-riak_kv.pb.Plo@am__quote@
+
+.cc.o:
+@am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cc.obj:
+@am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cc.lo:
+@am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+src/libriak_client_la-pbc.lo: src/pbc.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -MT src/libriak_client_la-pbc.lo -MD -MP -MF src/$(DEPDIR)/libriak_client_la-pbc.Tpo -c -o src/libriak_client_la-pbc.lo `test -f 'src/pbc.cpp' || echo '$(srcdir)/'`src/pbc.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) src/$(DEPDIR)/libriak_client_la-pbc.Tpo src/$(DEPDIR)/libriak_client_la-pbc.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/pbc.cpp' object='src/libriak_client_la-pbc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-pbc.lo `test -f 'src/pbc.cpp' || echo '$(srcdir)/'`src/pbc.cpp
+
+src/libriak_client_la-riak.pb.lo: src/riak.pb.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -MT src/libriak_client_la-riak.pb.lo -MD -MP -MF src/$(DEPDIR)/libriak_client_la-riak.pb.Tpo -c -o src/libriak_client_la-riak.pb.lo `test -f 'src/riak.pb.cc' || echo '$(srcdir)/'`src/riak.pb.cc
+@am__fastdepCXX_TRUE@	$(am__mv) src/$(DEPDIR)/libriak_client_la-riak.pb.Tpo src/$(DEPDIR)/libriak_client_la-riak.pb.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/riak.pb.cc' object='src/libriak_client_la-riak.pb.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-riak.pb.lo `test -f 'src/riak.pb.cc' || echo '$(srcdir)/'`src/riak.pb.cc
+
+src/libriak_client_la-riak_kv.pb.lo: src/riak_kv.pb.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -MT src/libriak_client_la-riak_kv.pb.lo -MD -MP -MF src/$(DEPDIR)/libriak_client_la-riak_kv.pb.Tpo -c -o src/libriak_client_la-riak_kv.pb.lo `test -f 'src/riak_kv.pb.cc' || echo '$(srcdir)/'`src/riak_kv.pb.cc
+@am__fastdepCXX_TRUE@	$(am__mv) src/$(DEPDIR)/libriak_client_la-riak_kv.pb.Tpo src/$(DEPDIR)/libriak_client_la-riak_kv.pb.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/riak_kv.pb.cc' object='src/libriak_client_la-riak_kv.pb.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-riak_kv.pb.lo `test -f 'src/riak_kv.pb.cc' || echo '$(srcdir)/'`src/riak_kv.pb.cc
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -430,13 +486,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-src/libriak_client_la-pbc.lo: src/pbc.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -MT src/libriak_client_la-pbc.lo -MD -MP -MF src/$(DEPDIR)/libriak_client_la-pbc.Tpo -c -o src/libriak_client_la-pbc.lo `test -f 'src/pbc.cpp' || echo '$(srcdir)/'`src/pbc.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) src/$(DEPDIR)/libriak_client_la-pbc.Tpo src/$(DEPDIR)/libriak_client_la-pbc.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/pbc.cpp' object='src/libriak_client_la-pbc.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-pbc.lo `test -f 'src/pbc.cpp' || echo '$(srcdir)/'`src/pbc.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

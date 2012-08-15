@@ -1,7 +1,10 @@
 AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 lib_LTLIBRARIES = libriak_client.la
-libriak_client_la_SOURCES = src/pbc.cpp
+libriak_client_la_SOURCES = src/pbc.cpp \
+			    src/riak.pb.cc \
+			    src/riak_kv.pb.cc
+
 libriak_client_la_CXXFLAGS = -g3 -Ibuild/deps/include $(CFLAG_VISIBILITY) 
 libriak_client_la_LDFLAGS = -Lbuild/deps/lib -lprotobuf-lite 
 			    -version-info 1:0:0 -no-undefined
