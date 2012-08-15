@@ -12,7 +12,7 @@ stamp-h2
 /doc/
 /doxytags.xml
 /deps/*.ts
-/deps/boost-1.47.0/tools/build/v2/engine/src/bin.*
+/deps/boost-1.50.0/tools/build/v2/engine/bin.*
 /deps/protobuf-2.4.1/src/*.o
 /deps/protobuf-2.4.1/src/*.lo
 /deps/protobuf-2.4.1/src/*.la
@@ -23,11 +23,11 @@ stamp-h2
 /src/*.lo
 /config.h
 /deps/Makefile
-/deps/boost-1.47.0/bin.v2/
-/deps/boost-1.47.0/tools/build/v2/bjam
-/deps/boost-1.47.0/tools/build/v2/b2
-/deps/boost-1.47.0/tools/build/v2/bootstrap.log
-/deps/boost-1.47.0/tools/build/v2/engine/src/bootstrap/
+/deps/boost-1.50.0/bin.v2/
+/deps/boost-1.50.0/tools/build/v2/bjam
+/deps/boost-1.50.0/tools/build/v2/b2
+/deps/boost-1.50.0/tools/build/v2/bootstrap.log
+/deps/boost-1.50.0/tools/build/v2/engine/src/bootstrap/
 /deps/protobuf-2.4.1/Makefile
 /deps/protobuf-2.4.1/config.h
 /deps/protobuf-2.4.1/gtest/Makefile

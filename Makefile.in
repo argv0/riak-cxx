@@ -15,6 +15,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -56,7 +57,7 @@ subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(top_srcdir)/riak_client/config.h.in \
-	$(srcdir)/riak_client.pc.in depcomp
+	$(srcdir)/riak_client.pc.in depcomp $(nobase_include_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_check_suncc.m4 \
 	$(top_srcdir)/m4/boost_shared_ptr.m4 \
@@ -100,13 +101,16 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
+	"$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libriak_client_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libriak_client_la_OBJECTS = src/libriak_client_la-pbc.lo \
 	src/libriak_client_la-riak.pb.lo \
-	src/libriak_client_la-riak_kv.pb.lo
+	src/libriak_client_la-riak_kv.pb.lo \
+	src/libriak_client_la-connection.lo \
+	src/libriak_client_la-basic_client.lo
 libriak_client_la_OBJECTS = $(am_libriak_client_la_OBJECTS)
 libriak_client_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
@@ -139,6 +143,7 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(pkgconfig_DATA)
+HEADERS = $(nobase_include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -279,12 +284,18 @@ ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 lib_LTLIBRARIES = libriak_client.la
 libriak_client_la_SOURCES = src/pbc.cpp \
 			    src/riak.pb.cc \
-			    src/riak_kv.pb.cc
+			    src/riak_kv.pb.cc \
+			    src/connection.cpp \
+			    src/basic_client.cpp
 
 libriak_client_la_CXXFLAGS = -g3 -Ibuild/deps/include $(CFLAG_VISIBILITY) 
 libriak_client_la_LDFLAGS = -Lbuild/deps/lib -lprotobuf-lite 
 riak_client_includedir = $(includedir)/riak_client/cxx
-#nobase_include_HEADERS = riak_client/cxx/riak_client.hpp 
+nobase_include_HEADERS = riak_client/riak_client_fwd.hpp \
+			 riak_client/noncopyable.hpp \
+			 riak_client/shared_ptr.hpp \
+			 riak_client/response.hpp
+
 riak_client_libincludedir = $(libdir)/riak_client/include
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = riak_client.pc
@@ -403,6 +414,10 @@ src/libriak_client_la-riak.pb.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libriak_client_la-riak_kv.pb.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/libriak_client_la-connection.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libriak_client_la-basic_client.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 libriak_client.la: $(libriak_client_la_OBJECTS) $(libriak_client_la_DEPENDENCIES) $(EXTRA_libriak_client_la_DEPENDENCIES) 
 	$(libriak_client_la_LINK) -rpath $(libdir) $(libriak_client_la_OBJECTS) $(libriak_client_la_LIBADD) $(LIBS)
 
@@ -414,6 +429,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-basic_client.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-connection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-pbc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-riak.pb.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libriak_client_la-riak_kv.pb.Plo@am__quote@
@@ -462,6 +479,20 @@ src/libriak_client_la-riak_kv.pb.lo: src/riak_kv.pb.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/riak_kv.pb.cc' object='src/libriak_client_la-riak_kv.pb.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-riak_kv.pb.lo `test -f 'src/riak_kv.pb.cc' || echo '$(srcdir)/'`src/riak_kv.pb.cc
+
+src/libriak_client_la-connection.lo: src/connection.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -MT src/libriak_client_la-connection.lo -MD -MP -MF src/$(DEPDIR)/libriak_client_la-connection.Tpo -c -o src/libriak_client_la-connection.lo `test -f 'src/connection.cpp' || echo '$(srcdir)/'`src/connection.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) src/$(DEPDIR)/libriak_client_la-connection.Tpo src/$(DEPDIR)/libriak_client_la-connection.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/connection.cpp' object='src/libriak_client_la-connection.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-connection.lo `test -f 'src/connection.cpp' || echo '$(srcdir)/'`src/connection.cpp
+
+src/libriak_client_la-basic_client.lo: src/basic_client.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -MT src/libriak_client_la-basic_client.lo -MD -MP -MF src/$(DEPDIR)/libriak_client_la-basic_client.Tpo -c -o src/libriak_client_la-basic_client.lo `test -f 'src/basic_client.cpp' || echo '$(srcdir)/'`src/basic_client.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) src/$(DEPDIR)/libriak_client_la-basic_client.Tpo src/$(DEPDIR)/libriak_client_la-basic_client.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/basic_client.cpp' object='src/libriak_client_la-basic_client.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libriak_client_la_CXXFLAGS) $(CXXFLAGS) -c -o src/libriak_client_la-basic_client.lo `test -f 'src/basic_client.cpp' || echo '$(srcdir)/'`src/basic_client.cpp
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -517,6 +548,30 @@ uninstall-pkgconfigDATA:
 	@list='$(pkgconfig_DATA)'; test -n "$(pkgconfigdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pkgconfigdir)'; $(am__uninstall_files_from_dir)
+install-nobase_includeHEADERS: $(nobase_include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	$(am__nobase_list) | while read dir files; do \
+	  xfiles=; for file in $$files; do \
+	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
+	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
+	  test -z "$$xfiles" || { \
+	    test "x$$dir" = x. || { \
+	      echo " $(MKDIR_P) '$(DESTDIR)$(includedir)/$$dir'"; \
+	      $(MKDIR_P) "$(DESTDIR)$(includedir)/$$dir"; }; \
+	    echo " $(INSTALL_HEADER) $$xfiles '$(DESTDIR)$(includedir)/$$dir'"; \
+	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
+	done
+
+uninstall-nobase_includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -655,10 +710,10 @@ distclean-tags:
 	-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LTLIBRARIES) $(DATA)
+all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -718,7 +773,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-pkgconfigDATA
+install-data-am: install-nobase_includeHEADERS install-pkgconfigDATA
 
 install-dvi: install-dvi-recursive
 
@@ -766,7 +821,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-libLTLIBRARIES uninstall-pkgconfigDATA
+uninstall-am: uninstall-libLTLIBRARIES uninstall-nobase_includeHEADERS \
+	uninstall-pkgconfigDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) \
 	cscopelist-recursive ctags-recursive install-am install-strip \
@@ -781,13 +837,15 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-pkgconfigDATA
 	info-am install install-am install-data install-data-am \
 	install-dvi install-dvi-am install-exec install-exec-am \
 	install-html install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-libLTLIBRARIES install-man \
+	install-nobase_includeHEADERS install-pdf install-pdf-am \
 	install-pkgconfigDATA install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs installdirs-am \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags tags-recursive uninstall uninstall-am \
-	uninstall-libLTLIBRARIES uninstall-pkgconfigDATA
+	uninstall-libLTLIBRARIES uninstall-nobase_includeHEADERS \
+	uninstall-pkgconfigDATA
 
 			    -version-info 1:0:0 -no-undefined
 

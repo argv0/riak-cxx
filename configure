@@ -1406,8 +1406,8 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-maintainer-mode
-                          enable make rules and dependencies not useful (and
+  --disable-maintainer-mode
+                          disable make rules and dependencies not useful (and
                           sometimes confusing) to the casual installer
   --enable-dependency-tracking
                           do not reject slow dependency extractors
@@ -2926,7 +2926,7 @@ $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles
 if test "${enable_maintainer_mode+set}" = set; then :
   enableval=$enable_maintainer_mode; USE_MAINTAINER_MODE=$enableval
 else
-  USE_MAINTAINER_MODE=no
+  USE_MAINTAINER_MODE=yes
 fi
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $USE_MAINTAINER_MODE" >&5

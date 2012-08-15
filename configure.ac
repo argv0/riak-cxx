@@ -3,7 +3,7 @@ AC_INIT([libriak_client], [1.0], [andy@andygross.org], [riak_client],
 AC_PREREQ([2.59])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([1.0 -Wall no-define foreign no-dist])
-AM_MAINTAINER_MODE([disable])
+AM_MAINTAINER_MODE([enable])
 AC_CONFIG_HEADERS([riak_client/config.h])
 AC_CONFIG_MACRO_DIR([m4])
 

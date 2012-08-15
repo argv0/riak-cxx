@@ -3,14 +3,19 @@ ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 lib_LTLIBRARIES = libriak_client.la
 libriak_client_la_SOURCES = src/pbc.cpp \
 			    src/riak.pb.cc \
-			    src/riak_kv.pb.cc
+			    src/riak_kv.pb.cc \
+			    src/connection.cpp \
+			    src/basic_client.cpp
 
 libriak_client_la_CXXFLAGS = -g3 -Ibuild/deps/include $(CFLAG_VISIBILITY) 
 libriak_client_la_LDFLAGS = -Lbuild/deps/lib -lprotobuf-lite 
 			    -version-info 1:0:0 -no-undefined
 
 riak_client_includedir = $(includedir)/riak_client/cxx
-#nobase_include_HEADERS = riak_client/cxx/riak_client.hpp 
+nobase_include_HEADERS = riak_client/riak_client_fwd.hpp \
+			 riak_client/noncopyable.hpp \
+			 riak_client/shared_ptr.hpp \
+			 riak_client/response.hpp
 
 riak_client_libincludedir = $(libdir)/riak_client/include
 
