@@ -17,19 +17,8 @@
 #ifndef RIAKCXX_SHARED_PTR_HPP_
 #define RIAKCXX_SHARED_PTR_HPP_
 #include "config.h"
+#include <memory>
 
-#if defined(HAVE_BOOST_SHARED_PTR) && defined(RIAKC_USE_BOOST_SHARED_PTR)
-#include <boost/shared_ptr.hpp>
-namespace riak { 
-    using boost::shared_ptr;
-}
-#elif defined(HAVE_TR1_SHARED_PTR)
-#include <tr1/memory>
-namespace riak { 
-    using std::tr1::shared_ptr;
-}
-#else
-#error "No shared_ptr class available"
-#endif
+using std::shared_ptr;
 
 #endif // include guard
